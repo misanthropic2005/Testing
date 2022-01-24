@@ -1,0 +1,40 @@
+repeat wait() until game.IsLoaded
+repeat wait() until game:GetService("Players").LocalPlayer;
+
+local PlayerService = game:GetService("Players")
+local Player = PlayerService.LocalPlayer
+
+local GA = function()
+   return game.PlaceId
+end
+local CD = function()
+   return game.HttpGet(game, "https://raw.githubusercontent.com/misanthropic2005/Testing/main/CurrentDiscord.paste")
+end
+local Supported = function()
+   
+   local SupportedGames;
+   
+   local SuccessfulRequest, BadRequest = pcall(function() 
+       SupportedGames = game:GetService("HttpService"):JSONDecode(game.HttpGet(game, "https://raw.githubusercontent.com/misanthropic2005/Testing/main/Supported.JSON")) 
+   end)
+   
+   if not SuccessfulRequest then
+      Player:Kick("\n\nLoading Error:\n" .. BadRequest .. "\n\n\n***Send this ERROR to " .. CD() .. "***")
+   elseif SuccessfulRequest then
+      if table.find(SupportedGames, GA()) then return true else return false end 
+   end
+end
+local LoadTable = function(GameID)
+   return game.HttpGet(game, "https://raw.githubusercontent.com/misanthropic2005/Testing/main/Scripts/" .. GameID)
+end 
+local LoadGame = function(GameID)
+   return loadstring(LoadTable(GameID))
+end
+
+if Supported(GA()) then
+    local Game_INIT = LoadGame(GA())
+    
+    Game_INIT()
+else
+    Player:Kick("\n\nLoading Error:\nUNSUPPORTED GAME.\n\n\nIF THIS IS A MISTAKE, MESSAGE " .. string.gsub(CD(), "\n", ""))
+end
